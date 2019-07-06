@@ -32,7 +32,7 @@ class member():
             print('用户信息获取失败：' + str(res))
 
 
- def CreateSaleOrder(self,sub_order_id,money,sale_type,num): #创建售后单
+ def CreateSaleOrder(self,sub_order_id,sale_type,money): #创建售后单
      sql='SELECT id FROM daily_sale_orders WHERE order_id=%d;'%sub_order_id
      obj=Mysql().sqlclien(sql)[0][0]
      token1 =admin_token
@@ -49,11 +49,11 @@ class member():
          'sale_problem_id': 11,
          'sale_type':sale_type,
          'problem_remark': '5132',
-         'number': num,
+         'number': 1,
          'operator_action':'客服备注',
 
          'pay_data':[
-                      {'pay_data_id': 1, 'money': str(money * num) },
+                      {'pay_data_id': 1, 'money': money  },
                           {'pay_data_id': 2, 'money': '0.01'},
               {'pay_data_id': 3, 'money': '0.01'}
                      ]
@@ -62,7 +62,7 @@ class member():
      if r.status_code==200:
          print('创建售后订单信息：' + str(r.json()))
      else:raise NameError(r.status_code)
-     return r.json()['data']['id'],str(money * num)
+     return r.json()['data']['id']
  def ConsultativeHistory(self): #协商历史
      membertoken=shopkeeper_token
      url =Common.first_url()+ 'app/ConsultativeHistory'

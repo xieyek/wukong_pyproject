@@ -22,8 +22,6 @@ class Business:
         }
         data1 = json.dumps(data)
         res = requests.post(url, data1, headers=headers)
-        # data1= json.dumps(data)
-        # res=Http.post(url,data1,token,ant_action="checked")
         if(res.status_code==200):
             print('拣货成功:'+str(res.json()))
         else:
@@ -51,7 +49,14 @@ class Business:
             print('发货成功'+str(res.json()))
         else:
             print('发货失败'+str(res.json()))
-        order().myorder(member_token, 1)
+        sql = 'SELECT * FROM sub_orders WHERE id=%d; ' % sub_order_id
+        sql_sub_order_id = Mysql().sqlclien(sql)[0][1]
+        threa_order_status = 'SELECT d.status,s.status,o.status FROM daily_sale_orders d LEFT JOIN sub_orders s ON d.order_id=s.order_id LEFT JOIN orders o ON d.order_id=o.id WHERE d.order_id=%d;' % sql_sub_order_id
+        order_status_total = Mysql().sqlclien(threa_order_status)
+        print( 'sub_order_status: ' + str(
+            order_status_total[0][1]) + ' ' + 'daily_sale_orders_status: ' + str(
+            order_status_total[0][0]) + ' ' + 'order_status: ' + str(order_status_total[0][2])
+              )
 
     # def qianshou(self,token,member_token):
     #    #order_id=2666587

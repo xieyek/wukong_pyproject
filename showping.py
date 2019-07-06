@@ -20,7 +20,8 @@ class showping:
         url1 = Common.first_url() + 'app/DailySaleDetail?id=%d' % id
         r=requests.get(url1,headers=headers).json()
         if r['status']==200:
-            sku_price = r['data']['buy']['sku'][sku_num]['sku_price']
+            print('获取商品详情成功：'+str(r))
+            # sku_price = r['data']['buy']['sku'][sku_num]['sku_price']
         else:print('获取商品详情失败'+str(r))
 
 
@@ -34,7 +35,8 @@ class showping:
 
         if(res.status_code==200):
             print('获取商品成功'+str(res.json()['data']['products'][num]))
-            return id, product_id, price, businessid, stock,sku_price
+            #businessid, stock,
+            return id, product_id, price,businessid,stock
         else:
           print('获取商品失败'+str(res.json()))
 

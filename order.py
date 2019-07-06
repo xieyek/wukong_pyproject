@@ -7,7 +7,7 @@ from Common.common import Common
 class order(object):
     def bulidorder(self,token,nub,num): #创建订单
         product=showping().indexshowping(token,num)
-        money=product[5]
+        # money=product[5]
         product_info=showping().showpinginfo(product[0],token)
         product_sku_id=product_info[1]
         daily_sale_id=product_info[0]
@@ -32,7 +32,7 @@ class order(object):
             'mobile':'18000000417',
             'remark':'快点发货',
             'freight':"0",
-            'freight_template_id':'1047',
+            'freight_template_id':'1',
             'is_gift':'0',
             'gift_text':'',
             'selected_order_label_array':'0',
@@ -44,7 +44,7 @@ class order(object):
             print('创建成功:' + str(order))
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
-            return trade_no, short_no,nub,money
+            return trade_no, short_no,nub
         else:
             print('创建失败:' + str(order))
     def payorder(self,token,trade_no): #余额支付
@@ -117,9 +117,11 @@ class order(object):
                 threa_order_status = 'SELECT d.status,s.status,o.status FROM daily_sale_orders d LEFT JOIN sub_orders s ON d.order_id=s.order_id LEFT JOIN orders o ON d.order_id=o.id WHERE d.order_id=%d;' % sql_sub_order_id
                 order_status_total = Mysql().sqlclien(threa_order_status)
                 print('商品信息：' + '订单号： ' + str(daily_sale_order_short_no) + '  ' + '价格; ' + str(
-                    dailysale_order_price) + ' ' + 'sub_order_status: ' + str(
+                    dailysale_order_price)
+                      + ' ' + 'sub_order_status: ' + str(
                     order_status_total[0][1]) + ' ' + 'daily_sale_orders_status: ' + str(
-                    order_status_total[0][0]) + ' ' + 'order_status: ' + str(order_status_total[0][2]))
+                    order_status_total[0][0]) + ' ' + 'order_status: ' + str(order_status_total[0][2])
+                      )
             return sub_order_id, sql_sub_order_id,dailysale_order_price
 
 

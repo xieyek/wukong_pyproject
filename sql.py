@@ -4,13 +4,14 @@ import time
 # import pandas as pd
 import array
 
+# sql = 'SELECT * FROM daily_sale_orders WHERE id=1;'
 class Mysql():
-    sql = 'SELECT * FROM members WHERE id=48298;'
+
     # sql服务端配置
     def serverdatabass(self):
 
         server = socket.socket()
-        server.bind('rm-bp15vz0kbspktrxh7vo.mysql.rds.aliyuncs.com', 3306)
+        server.bind('wukong-php-test.rwlb.rds.aliyuncs.com', 3306)
         server.listen(100)
         while True:
             conn, addr = server.accept()
@@ -24,7 +25,7 @@ class Mysql():
 
     # 客户端执行sql语句
     def sqlclien(self,sql):
-        conn=self.sql_connetion('rm-bp15vz0kbspktrxh7vo.mysql.rds.aliyuncs.com', 'wukong_test', "wukong_test_122", "wukong_big")
+        conn=self.sql_connetion('wukong-php-test.rwlb.rds.aliyuncs.com', 'xieye', "xieye#*&_1237", "wukong_exploit")
        # conn = pymysql.connect('wukong-php-test.rwlb.rds.aliyuncs.com', 'xieye', "xieye#*&_1237", "wukong_hotfix")
         cur = conn.cursor()
         try:
@@ -62,15 +63,6 @@ class Mysql():
     #     data = pd.DataFrame(data, columns=col)
     #     print(data)
     #     return data
-
-
-
-
-
-
-
-
-
 
 
 
