@@ -5,17 +5,6 @@ from showping import showping
 from sql import Mysql
 from Common.common import Common
 class order(object):
-    #product_sku_id=9867
-   # product_num=1
-   # daily_sale_id=228
-
-    # def __init__(self,product_sku_id=product_sku_id,product_num=product_num,daily_sale_id=daily_sale_id):
-    #    self.product_sku_id=product_sku_id
-    #    self.product_num=product_num
-    #    self.daily_sale_id=daily_sale_id
-     #  self.token = Login().login()
-
-
     def bulidorder(self,token,nub,num): #创建订单
         product=showping().indexshowping(token,num)
         money=product[5]
