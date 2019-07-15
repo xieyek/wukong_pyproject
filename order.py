@@ -7,10 +7,10 @@ from Common.common import Common
 class order(object):
     def bulidorder(self,token,nub,num): #创建订单
         product=showping().indexshowping(token,num)
-        # money=product[5]
         product_info=showping().showpinginfo(product[0],token)
         product_sku_id=product_info[1]
         daily_sale_id=product_info[0]
+        freight_template_id= showping().Freights(token,product_sku_id)
         url=Common.first_url()+'app/GenerateDailySaleOrder'
         #url="https://hotfix.shuixiongkeji.net/app/GenerateDailySaleOrder"
         headers = {
@@ -32,7 +32,7 @@ class order(object):
             'mobile':'18000000417',
             'remark':'快点发货',
             'freight':"0",
-            'freight_template_id':'1',
+            'freight_template_id':freight_template_id,
             'is_gift':'0',
             'gift_text':'',
             'selected_order_label_array':'0',
@@ -44,23 +44,18 @@ class order(object):
             print('创建成功:' + str(order))
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
-            return trade_no, short_no,nub
+            pay_price=order['data']['pay_price']
+            return trade_no, short_no,nub,pay_price
         else:
             print('创建失败:' + str(order))
     def payorder(self,token,trade_no): #余额支付
-    #    print(self.token)
-   #     trade_no=self.bulidorder()
         url=Common.first_url()+'app/PayBySystem'
        # url="https://hotfix.shuixiongkeji.net/app/PayBySystem"
         headers = {
         # Bearer
         'Content-Type': "application/json",
         'Authorization': token
-        # "cookie": "token="+ membertoken
     }
-       #  headers = {
-       #      "cookie": "token=" + token
-       #  }
         data={
             'trade_no':trade_no,
             'password':'',
@@ -113,6 +108,7 @@ class order(object):
                 dailysale_order_price = res['data']['data'][0]['dailysale_order_price']
                 #consumer_price=res['data']['data'][0]['products'][0]['consumer_price']
                 sql = 'SELECT * FROM sub_orders WHERE id=%d; ' % sub_order_id
+
                 sql_sub_order_id = Mysql().sqlclien(sql)[0][1]
                 threa_order_status = 'SELECT d.status,s.status,o.status FROM daily_sale_orders d LEFT JOIN sub_orders s ON d.order_id=s.order_id LEFT JOIN orders o ON d.order_id=o.id WHERE d.order_id=%d;' % sql_sub_order_id
                 order_status_total = Mysql().sqlclien(threa_order_status)
@@ -152,7 +148,7 @@ class order(object):
         }
         data1 = Common.dumps_text(data)
         obj = Http.post(Common.first_url() + "app/DailySaleOrderPaid", data1, token)
-        print("创建悟空团订单后虚假支付" + str(obj.status_code))
+        print("创建悟空团订单后虚假支付" + str(obj.json()))
         Common.out_error(obj)
         return obj
 

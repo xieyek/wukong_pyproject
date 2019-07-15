@@ -4,7 +4,7 @@ import  json
 import requests
 from  sql import Mysql
 class showping:
-    def indexshowping(self,token,num,sku_num=0):
+    def indexshowping(self,token,num):
         url=Common.first_url()+'app/MrdGetDailySale'
 
         #url='https://hotfix.shuixiongkeji.net/app/MrdGetDailySale'
@@ -17,14 +17,6 @@ class showping:
         product_id=res.json()['data']['products'][0]['product_id']
         price=res.json()['data']['products'][0]['price']
         id = res.json()['data']['products'][num]['id']# 首页第几个商品，0，1，....
-        url1 = Common.first_url() + 'app/DailySaleDetail?id=%d' % id
-        r=requests.get(url1,headers=headers).json()
-        if r['status']==200:
-            print('获取商品详情成功：'+str(r))
-            # sku_price = r['data']['buy']['sku'][sku_num]['sku_price']
-        else:print('获取商品详情失败'+str(r))
-
-
         if(id!=None):
             sql = "SELECT * FROM products WHERE id=%d;" % product_id
             exesql = Mysql().sqlclien(sql)
@@ -40,18 +32,16 @@ class showping:
         else:
           print('获取商品失败'+str(res.json()))
 
+
     #我的订单页面
     def showpinginfo(self,id,token,sku_num=0):
         #url='https://hotfix.shuixiongkeji.net/app/DailySaleDetail?id=%d'%id
         url=Common.first_url()+'app/DailySaleDetail?id=%d'%id
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
         res=requests.get(url,headers=headers).json()
-       # print(res['data']['buy']['attr'])
         daily_sale_id =res['data']['daily_sale_id']
         #default_sku_stock
         #总剩余库存
@@ -67,3 +57,19 @@ class showping:
             moer_sku_stock = res['data']['buy']['sku'][sku_num]['sku_stock']
             moer_sku_stock_id = res['data']['buy']['sku'][sku_num]['sku_id']
             return daily_sale_id,moer_sku_stock_id, total_stock, moer_sku_stock
+    def Freights(self,token,product_sku_id):  #运费模版
+        url=Common.first_url()+'app/Freights'
+        headers = {
+            'Content-Type': "application/json",
+            'Authorization': token
+        }
+        data={
+            'product_sku_id':product_sku_id,
+            'province':'北京市',
+            'city':'北京市',
+            'area':'东城区'
+        }
+        data1=Common.dumps_text(data)
+        res=requests.get(url,headers=headers,data=data1).json()
+        freights_id=res['data']['freights'][0]['template_id']
+        return freights_id

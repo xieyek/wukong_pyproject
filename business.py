@@ -46,9 +46,9 @@ class Business:
         res=requests.post(url,data1,headers=headers)
         #res = Http.post(url, data1, token)
         if (res.status_code == 200):
-            print('发货成功'+str(res.json()))
+            print('发货信息'+str(res.json()))
         else:
-            print('发货失败'+str(res.json()))
+            print('发货信息'+str(res.json()))
         sql = 'SELECT * FROM sub_orders WHERE id=%d; ' % sub_order_id
         sql_sub_order_id = Mysql().sqlclien(sql)[0][1]
         threa_order_status = 'SELECT d.status,s.status,o.status FROM daily_sale_orders d LEFT JOIN sub_orders s ON d.order_id=s.order_id LEFT JOIN orders o ON d.order_id=o.id WHERE d.order_id=%d;' % sql_sub_order_id
@@ -57,30 +57,6 @@ class Business:
             order_status_total[0][1]) + ' ' + 'daily_sale_orders_status: ' + str(
             order_status_total[0][0]) + ' ' + 'order_status: ' + str(order_status_total[0][2])
               )
-
-    # def qianshou(self,token,member_token):
-    #    #order_id=2666587
-    #    order_id=order.myorder(member_token,1)[1]
-    #    print(order_id)
-    #    sql='SELECT * FROM order_expresses WHERE order_id=%d;'%order_id
-    #    print(Mysql().sqlclien(sql))
-    #    order_expresses=Mysql().sqlclien(sql)[0][6]
-    #    print(type(order_expresses))
-    #    url=Common.first_url(2)+'admin/SendExpresses'
-    #    headers = {
-    #        # Bearer
-    #        'Content-Type': "application/json",
-    #        'Authorization': token
-    #        # "cookie": "token="+ membertoken
-    #    }
-    #    data={
-    #        'delivery_no':order_expresses
-    #    }
-    #    res= requests.post(url, Common.dumps_text(data), headers=headers)
-    #    print(res.json())
-
-
-
     #添加商品
     def post_products_keyattr(self,token, product_category_id=2, name="洗面奶111",
                                       factory_price='10', sale_price='20', weight="1kg",

@@ -32,7 +32,7 @@ class member():
             print('用户信息获取失败：' + str(res))
 
 
- def CreateSaleOrder(self,sub_order_id,sale_type,money): #创建售后单
+ def CreateSaleOrder(self,sub_order_id,sale_type,price): #创建售后单
      sql='SELECT id FROM daily_sale_orders WHERE order_id=%d;'%sub_order_id
      obj=Mysql().sqlclien(sql)[0][0]
      token1 =admin_token
@@ -53,7 +53,7 @@ class member():
          'operator_action':'客服备注',
 
          'pay_data':[
-                      {'pay_data_id': 1, 'money': money  },
+                      {'pay_data_id': 1, 'money':price},
                           {'pay_data_id': 2, 'money': '0.01'},
               {'pay_data_id': 3, 'money': '0.01'}
                      ]
@@ -172,7 +172,9 @@ class member():
       }
       date = {
           'id':id,
-          'delivery_no':'371422'+delivery_no,
+          #'delivery_no':'371422'+delivery_no,
+          'delivery_no': '3714820492928',
+
           'delivery_id':75,
           'images':['http://thirdwx.qlogo.cn/mmopen/vi_32/pV00oiasYq7NEJDjSg25yY6LB0pLUmZtcY7RtME5CxCpGYPSNwDGVNkffkRLicygVa8lJoc1kvHZJLB02J9H5cTg/132']
       }
