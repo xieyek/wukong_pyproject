@@ -28,7 +28,7 @@ class Business:
             print('拣货失败:'+str(res.json()))
 
 
-    def fahuo(self,token,member_token,short_no,sub_order_id,express_num):
+    def fahuo(self,token,short_no,sub_order_id,express_num):
         url=Common.first_url()+'seller/UnifyDeliverGoods'
         #url='https://hotfix.shuixiongkeji.net/OrderExpresses?'
         headers = {
@@ -47,6 +47,7 @@ class Business:
         #res = Http.post(url, data1, token)
         if (res.status_code == 200):
             print('发货信息'+str(res.json()))
+            return res.status_code
         else:
             print('发货信息'+str(res.json()))
         sql = 'SELECT * FROM sub_orders WHERE id=%d; ' % sub_order_id

@@ -5,11 +5,11 @@ from showping import showping
 from sql import Mysql
 from Common.common import Common
 class order(object):
-    def bulidorder(self,token,nub,num): #创建订单
-        product=showping().indexshowping(token,num)
-        product_info=showping().showpinginfo(product[0],token)
-        product_sku_id=product_info[1]
-        daily_sale_id=product_info[0]
+    def bulidorder(self,token,order_num,product_sku_id,daily_sale_id): #创建订单
+        # product=showping().indexshowping(token,index_num)
+        # product_info=showping().showpinginfo(product[0],token)
+        # product_sku_id=product_info[1]
+        # daily_sale_id=product_info[0]
         freight_template_id= showping().Freights(token,product_sku_id)
         url=Common.first_url()+'app/GenerateDailySaleOrder'
         #url="https://hotfix.shuixiongkeji.net/app/GenerateDailySaleOrder"
@@ -22,7 +22,7 @@ class order(object):
         data={
             'area_code':'110101',
             'product_sku_id':product_sku_id,
-            'product_num':nub,#购买数量
+            'product_num':order_num,#购买数量
             'daily_sale_id':daily_sale_id,
             'contacter':'哈哈哈',
             'province':'北京市',
@@ -45,7 +45,7 @@ class order(object):
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
             pay_price=order['data']['pay_price']
-            return trade_no, short_no,nub,pay_price
+            return trade_no, short_no,order_num,pay_price
         else:
             print('创建失败:' + str(order))
     def payorder(self,token,trade_no): #余额支付

@@ -292,9 +292,9 @@ class member():
          # 'account_name':'哈哈哈',
          # 'job_order_no':'24888150',
          'pay_data': [
-             # {'pay_data_id': 1,  'money': money},
+             {'pay_data_id': 1,  'money': money},
              #  {'pay_data_id': 2,'money': '10'},
-                      {'pay_data_id': 3,  'money': '0.01'}
+             #          {'pay_data_id': 3,  'money': '0.01'}
         ]
      }
      r = requests.post(url, data=json.dumps(date), headers=headers)

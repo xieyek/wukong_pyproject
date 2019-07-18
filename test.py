@@ -34,7 +34,7 @@ num=bulidorder[2]
 price=bulidorder[3]
 
 pyorder=order.payorder(membertoken,trade_no) #余额购买
-order.post_daily_sale_order_paid(membertoken,trade_no,price) #免支付接口，刷钱
+# order.post_daily_sale_order_paid(membertoken,trade_no,price) #免支付接口，刷钱
 # qxzhifuorder=order.qxzhifuorder(membertoken,short_no) # 取消已支付订单
 # s=order.nopayquxiao(membertoken,trade_no)
 
@@ -43,7 +43,6 @@ price=order_data[2]
 sub_order_id=order_data[0]
 order_id=order_data[1]
 businessadmin=Business()
-time.sleep(0.3)
 businessadmin.takeshoping(businesstoken,sub_order_id)#拣货
 fahuo=businessadmin.fahuo(businesstoken,membertoken,short_no,sub_order_id,num)#发货
 # # sub_order_id=2677894
