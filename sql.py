@@ -3,7 +3,6 @@ import pymysql
 import time
 # import pandas as pd
 import array
-
 # sql = 'SELECT * FROM daily_sale_orders WHERE id=1;'
 class Mysql():
 
@@ -39,7 +38,5 @@ class Mysql():
             conn.close()
             cur.close()
         return results
-
-
 
 

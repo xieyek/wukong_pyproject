@@ -7,7 +7,7 @@ from memberinfo import member
 from cf import *
 from showping import showping
 from  order import order
-from login import Login
+# from login import Login
 from business import Business
 from Common.common import Common
 import json
@@ -27,13 +27,13 @@ memberinfo=member()
 
 
 order=order()
-bulidorder=order.bulidorder(membertoken,1,1) #创建订单
+bulidorder=order.bulidorder(membertoken,1,3) #创建订单
 trade_no=bulidorder[0]
 short_no=bulidorder[1]
 num=bulidorder[2]
 price=bulidorder[3]
 
-# pyorder=order.payorder(membertoken,trade_no) #余额购买
+pyorder=order.payorder(membertoken,trade_no) #余额购买
 order.post_daily_sale_order_paid(membertoken,trade_no,price) #免支付接口，刷钱
 # qxzhifuorder=order.qxzhifuorder(membertoken,short_no) # 取消已支付订单
 # s=order.nopayquxiao(membertoken,trade_no)
@@ -43,18 +43,21 @@ price=order_data[2]
 sub_order_id=order_data[0]
 order_id=order_data[1]
 businessadmin=Business()
-take=businessadmin.takeshoping(businesstoken,sub_order_id)#拣货
+time.sleep(0.3)
+businessadmin.takeshoping(businesstoken,sub_order_id)#拣货
 fahuo=businessadmin.fahuo(businesstoken,membertoken,short_no,sub_order_id,num)#发货
-# sub_order_id=2677894
-memberinfo.SingleOrders(admin_token,sub_order_id)#签收
+# # sub_order_id=2677894
+memberinfo.SingleOrder(admin_token,sub_order_id,3)  #签收和完成的
+# memberinfo.SingleOrders(admin_token,sub_order_id)#签收
 # time.sleep(60)
 # sub_order_id=2699490
 # price='180'
 # SaleOrder_id='130'
-# SaleOrder_id,price=memberinfo.CreateSaleOrder(sub_order_id,2,price) #创建售后单
+# SaleOrder_id=memberinfo.CreateSaleOrder(order_id,1,price) #创建售后单
+# memberinfo.UpdateSaleOrde(admin_token,SaleOrder_id)  #编辑售后单
 # memberinfo.SupplySaleOrder(SaleOrder_id)#用户补充
 # memberinfo.SaleOrderHandle(int(SaleOrder_id),3)#审核
-#memberinfo.SaleOrderClose(int(SaleOrder_id),price)#结案
+# memberinfo.SaleOrderClose(int(SaleOrder_id),price)#结案
 
 
 #buildshoping=businessadmin.post_products_keyattr(businesstoken)

@@ -1,4 +1,6 @@
-from login import Login
+
+from time import sleep
+import var
 import requests
 import json
 from datetime import *
@@ -6,6 +8,8 @@ from http_method import Http
 from Common.common import Common
 from sql import Mysql
 from cf import *
+import cf
+from operation1 import Operation1
 import math
 H5_url='http://h5.shuixiongkeji.net/'
 admin_token=operation_token
@@ -15,10 +19,8 @@ class member():
         url=Common.first_url()+'app/MrdMemberInfo'
         #url = "https://hotfix.shuixiongkeji.net/app/MrdMemberInfo"
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
        # res = requests.request("GET",url, headers=headers)
         res = requests.get(url=url,headers=headers)
@@ -30,11 +32,178 @@ class member():
 
         else:
             print('用户信息获取失败：' + str(res))
+ #绑定邀请人
+ def post_update_info(self,token, recommend_code):
+     data = {
+         "recommend_code": recommend_code,
+     }
+     data1 = Common.dumps_text(data)
+     obj = Http.post(Common.first_url() + "app/UpdateInfo", data1, token)
+     print("绑定邀请人手机" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
+ #实名认证
+ def post_member_update(self,token, member_id, realname="真实姓名", license_code="441422199304103302", is_license="1", license_type="1",
+                           license_img_back="https://mayistatic.bc2c.cn/Fugt_Cv1_C61HpzjGnyva9VLy8xu?imageMogr2/auto-orient",
+                        license_img_front="https://mayistatic.bc2c.cn/FoGxj_MzoLpcXNxdxtWf5XVSwo5s?imageMogr2/auto-orient"):
+        data = {
+            "id": member_id,
+            "is_license": is_license,
+            "license_code": license_code,
+            license_img_back: license_img_back,
+            license_img_front: license_img_front,
+            "license_type": license_type,
+            "realname": realname
+        }
+        data1 = Common.dumps_text(data)
+        obj = Http.post(Common.first_url() + "admin/MemberUpdate", data1, token)
+        print("掌柜实名认证" + str(obj.status_code)+str(obj.json()))
+        Common.out_error(obj)
+        return obj
+        # 创建购买会员卡订单
+
+ #创建购买会员卡订单
+ def post_generate_buy_card_order(self,token, membership_card_number=1, type1=0, agent_level_id=None):
+     data = {
+         "membership_card_number": membership_card_number,  # 购买数量
+         "type": type1,  # 类型 0-主动 1-被动
+         "agent_level_id": agent_level_id,
+     }
+     data1 = Common.dumps_text(data)
+     obj = Http.post(Common.first_url() + "app/GenerateBuyCardOrder", data1, token)
+     print("创建购买会员卡订单" + str(obj.status_code))
+     Common.out_error(obj)
+     return obj
+
+ # 获取悟空掌柜小店经营权信息
+ def get_member_info(self,token):
+     obj = Http.get(Common.first_url() + "app/MemberInfo", None, token)
+     print("获取悟空掌柜小店经营权信息" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
+
+#订单免支付接口
+ def post_daily_sale_order_paid(self, token, trade_no, pay_price):
+     data = {
+         "trade_no": trade_no,  # 流水账号
+         "pay_price": pay_price,  # 支付价格
+     }
+     data1 = Common.dumps_text(data)
+     obj = Http.post(Common.first_url() + "app/DailySaleOrderPaid", data1, token)
+     print("创建悟空团订单后虚假支付" + str(obj.json()))
+     Common.out_error(obj)
+     return obj
+     # 创建会员卡订单后虚假支付
+
+
+ def post_member_card_order_paid(self,token, trade_no, pay_price):
+     data = {
+         "trade_no": trade_no,  # 流水账号
+         "pay_price": pay_price,  # 支付价格
+     }
+     data1 = Common.dumps_text(data)
+     obj = Http.post(Common.first_url() + "app/MemberCardOrderPaid", data1, token)
+     print("创建会员卡订单后虚假支付" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
+
+ # 注册悟空掌柜，绑定邀请人
+ def register_shopkeeper(self,token, recommend_mobile=recommend_mobile):
+     # 创建购买会员卡订单,1张
+     b = member().post_generate_buy_card_order(token)
+     trade_no =Common.loads_text(b)["data"]["trade_no"]
+     pay_price =Common.loads_text(b)["data"]["pay_price"]
+     # # 创建订单后微信支付
+     # ShopKeeper.post_pay_order(token, trade_no, "365", "2", "2", "购买服务包")
+     # # 创建订单后微信支付验证支付状态
+     # ShopKeeper.post_pay_status(token, trade_no, "2", "2")
+     # 创建订单后虚假支付
+     member().post_member_card_order_paid(token, trade_no, pay_price)
+     # 绑定邀请人
+     member().post_update_info(token, recommend_mobile)
+     # 获取悟空掌柜小店经营权信息
+     m = member().get_member_info(token)
+     member_info =Common.loads_text(m)["data"]["id"]
+     # 实名认证
+     member().post_member_update(operation_token, member_info)
+    # 绑定邀请人手机后激活掌柜权限
+    #  member().post_js_signature(token)
+     # 获取我的业绩中心信息
+     member().get_mrd_order_income(shopkeeper_token)
+
+     # 一键开启小店创建分享链接
+ def post_js_signature(self,token, page="wukong_index", url="https://bh5.shuixiongkeji.net/H5/#/index/home"):
+     data = {
+         "page": page,
+         "url": url,
+     }
+     data1 = Common.dumps_text(data)
+     obj = Http.post(Common.first_url() + "app/JsSignature", data1, token)
+     print("一键开启小店创建分享链接" + str(obj.status_code))
+     Common.out_error(obj)
+     return obj
+
+     # 获取我的业绩中心信息
+ def get_mrd_order_income(self,token):
+     obj = Http.get(Common.first_url() + "app/MrdOrderIncome", None, token)
+     print("获取我的业绩中心信息" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
+
+  # 购买会员卡 升级或注册
+
+ def buy_member_card(self,token, card_number=1, type1=0):
+        if card_number == 0:
+            print("购买0张卡")
+        elif card_number == var.card_price[4][0]:
+            member().global_partner(token)
+        else:
+            # 创建购买会员卡订单
+            if card_number == var.card_price[1][0]:
+                o = member().post_generate_buy_card_order(token, card_number, type1=type1, agent_level_id=2)
+            elif card_number == var.card_price[2][0]:
+                o = member().post_generate_buy_card_order(token, card_number, type1=type1, agent_level_id=3)
+            elif card_number == var.card_price[3][0]:
+                o = member().post_generate_buy_card_order(token, card_number, type1=type1, agent_level_id=4)
+            else:
+                o = member().post_generate_buy_card_order(token, card_number, type1=type1, agent_level_id=None)
+            d = Common.loads_text(o)
+
+            trade_no = d["data"]["trade_no"]
+            pay_price = d["data"]["pay_price"]
+            # 创建订单后虚假支付
+            member().post_member_card_order_paid(token, trade_no, pay_price)
+            return trade_no, pay_price
+        # 设置为全球人
+
+ def global_partner(self,sp_token):
+     op_token = cf.operation_token.operation_token
+     # 发送验证码
+     c = Operation1.post_sms(op_token, cf.operation_mobile, "7")
+     code = Common.loads_text(c)["data"][0]["attributes"]["content"]
+     # c = Operation.get_agent_top_msm(op_token)
+     # code = Common.loads_text(c)["data"]["content"]
+     # 获取小店经营中心信息
+     m = member().get_mrd_member_info(sp_token)
+     member_id = Common.loads_text(m)["data"]["id"]
+     # 设置全球合伙人
+     Operation1.post_order(op_token, member_id, code)
+     # Operation.post_set_agent_top(op_token, code, member_id)
+     # Common.strike_n(65)
+
+     # 获取小店经营中心信息
+
+ def get_mrd_member_info(self,token):
+         obj = Http.get(Common.first_url() + "app/MrdMemberInfo", None, token)
+         print("获取小店经营中心信息" + str(obj.status_code))
+         Common.out_error(obj)
+         return obj
 
 
  def CreateSaleOrder(self,sub_order_id,sale_type,price): #创建售后单
      sql='SELECT id FROM daily_sale_orders WHERE order_id=%d;'%sub_order_id
      obj=Mysql().sqlclien(sql)[0][0]
+
      token1 =admin_token
      url=Common.first_url()+ 'admin/CreateSaleOrder'
      url1='http://10.0.0.137'
@@ -46,23 +215,32 @@ class member():
      data={
          "order_id":obj,    #dali_order的id
         # 'job_order_id': [6],
-         'sale_problem_id': 11,
+         'sale_problem_id': 1,
          'sale_type':sale_type,
-         'problem_remark': '5132',
+         'problem_remark': '哈哈哈',
          'number': 1,
          'operator_action':'客服备注',
-
+         'business_duty':0,
          'pay_data':[
                       {'pay_data_id': 1, 'money':price},
-                          {'pay_data_id': 2, 'money': '0.01'},
-              {'pay_data_id': 3, 'money': '0.01'}
-                     ]
+              #             {'pay_data_id': 2, 'money': '0.01'},
+              # {'pay_data_id': 3, 'money': '0.01'}
+                     ],
+         "images": [],
+         "video": [],
+         "product_detail": "",
+         "receiver_name": "哈哈哈",
+         "receiver_mobile": "18000000417",
+         "receiver_province": "北京市",
+         "receiver_city": "北京市",
+         "receiver_area": "东城区",
+         "receiver_address": "Lucie小店区"
      }
      r=requests.post(url,data=common.dumps_text(data),headers=headers)
-     if r.status_code==200:
+     if r.json()['status']==200:
          print('创建售后订单信息：' + str(r.json()))
-     else:raise NameError(r.status_code)
-     return r.json()['data']['id']
+         return r.json()['data']['id']
+     else:print('创建售后订单报错信息',r.json())
  def ConsultativeHistory(self): #协商历史
      membertoken=shopkeeper_token
      url =Common.first_url()+ 'app/ConsultativeHistory'
@@ -114,8 +292,8 @@ class member():
          # 'account_name':'哈哈哈',
          # 'job_order_no':'24888150',
          'pay_data': [
-             {'pay_data_id': 1,  'money': money},
-              {'pay_data_id': 2,'money': '0.01'},
+             # {'pay_data_id': 1,  'money': money},
+             #  {'pay_data_id': 2,'money': '10'},
                       {'pay_data_id': 3,  'money': '0.01'}
         ]
      }
@@ -172,10 +350,10 @@ class member():
       }
       date = {
           'id':id,
-          #'delivery_no':'371422'+delivery_no,
-          'delivery_no': '3714820492928',
-
+          'delivery_no':'371422'+delivery_no,
+          # 'delivery_no': '3714820492928',
           'delivery_id':75,
+          'remark':'哈哈哈',
           'images':['http://thirdwx.qlogo.cn/mmopen/vi_32/pV00oiasYq7NEJDjSg25yY6LB0pLUmZtcY7RtME5CxCpGYPSNwDGVNkffkRLicygVa8lJoc1kvHZJLB02J9H5cTg/132']
       }
       r = requests.post(url, data=json.dumps(date), headers=headers)
@@ -365,7 +543,21 @@ class member():
          'parent_key':'postSaleOrder.autoClose'
      }
      r=requests.post(url,data=Common.dumps_text(data),headers=headers)
-     print(r.json())
+ def UpdateSaleOrde(self,token,id):   #修改售后单
+      url = Common.first_url() + 'admin/UpdateSaleOrder'
+      headers = {'Content-Type': 'application/json',
+                'Authorization': token
+                }
+      data={
+         'id':id,
+          'sale_problem_id':1,
+          'problem_remark':'哈哈哈哈哈哈',
+          'number':1,
+          'business_duty':1
+
+     }
+      r = requests.post(url, data=Common.dumps_text(data), headers=headers).json()
+      print('修改售后信息',r)
 
  def SingleOrders(self,token,sub_order_id):#签收接口
      url =Common.first_url()+'admin/SingleOrders'
@@ -378,7 +570,6 @@ class member():
      req = requests.post(url=url, headers=header, data=data1)
      print('签收：'+str(req.json()))
      # 结算
-
      # url = 'http://h5.shuixiongkeji.net/admin/CompletedOrders'
      # header = {'Content-Type': 'application/json',
      #           'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvaDUuc2h1aXhpb25na2VqaS5uZXRcL2FkbWluXC9BZG1pbkxvZ2luIiwiaWF0IjoxNTYwNTk2MTk4LCJleHAiOjE1NjE4MDU3OTgsIm5iZiI6MTU2MDU5NjE5OCwianRpIjoiVDY5dVQ1c1NCZklBOWxIMyIsInN1YiI6MSwicHJ2IjoiOTcwMzBiM2RiMjQyMDhjNDJkZTcyZmY2NTZjNDcwYWIyMDJmYjlmMCIsInJvbGUiOiJBRE1JTiIsInVzZXJuYW1lIjoic3hraiIsImlkIjoxLCJpc19hZG1pbiI6dHJ1ZSwicm9sZV9pZCI6MSwicmVzZXRfdGltZSI6IjIwMTktMDQtMjcgMjI6NDQ6NDMifQ.YlrdVFsGlJ1IwuUc5Z8PlPvuI6qe7zIt5czYV9ywwWs'
@@ -389,5 +580,50 @@ class member():
      # data1 = Common.dumps_text(date)
      # req = requests.post(url=url, headers=header, data=data1)
      # print(req.json())
+ def SingleOrder(self,token,sub_order_id, type):
+         # 签收
+         if type == 1:
+             url = Common.first_url()+'admin/SingleOrders'
+             header = {'Content-Type': 'application/json',
+                       'Authorization': token
+
+                       }
+             date = {'sub_order_id': sub_order_id}
+             data1 = Common.dumps_text(date)
+             req = requests.post(url=url, headers=header, data=data1)
+             print(req.json())
+
+         # # 结算
+         # #
+         if type == 2: #直接完成
+             url =Common.first_url()+'admin/CompletedOrders'
+             header = {'Content-Type': 'application/json',
+                       'Authorization':token
+                       }
+             date = {
+                 'sub_order_id': sub_order_id
+             }
+             data1 = Common.dumps_text(date)
+             req = requests.post(url=url, headers=header, data=data1)
+             print(req.json())
+         if type == 3: #签收并且完成
+             url = Common.first_url()+'admin/SingleOrders'
+             url1=Common.first_url()+'admin/CompletedOrders'
+             header = {'Content-Type': 'application/json',
+                       'Authorization':token
+                       }
+             date = {
+                 'sub_order_id': sub_order_id
+             }
+             data1 = Common.dumps_text(date)
+             req = requests.post(url=url, headers=header, data=data1)
+             sleep(0.1)
+             res=requests.post(url=url1, headers=header, data=data1)
+             print('签收：',req.json())
+             print('完成：',res.json())
+
+
+
+
 #member().SetConfig()
 #member().SupplySaleOrder()
