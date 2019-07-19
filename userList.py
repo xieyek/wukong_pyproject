@@ -5,7 +5,7 @@ from showping import showping
 from  order import order
 # from login import Login
 from business import Business
-class UserList():
+class UserList(object):
     # 注册悟空掌柜，绑定邀请人购卡刷钱
     @staticmethod
     def register_card_bill():

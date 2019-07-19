@@ -105,7 +105,12 @@ class Common(object):
     def dict_text(data1,data2):
         obj=dict(zip(data1,data2))
         return obj
+        # 获取当前时间后几天
 
+    @staticmethod
+    def next_time(day):
+        a = (datetime.datetime.now() + datetime.timedelta(days=day)).strftime('%Y-%m-%d')
+        return a
 
     # 获取当前时间
     @staticmethod

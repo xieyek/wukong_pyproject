@@ -8,13 +8,13 @@ class Http:
     @staticmethod
     def get(url, data, token, ant_action=None):
         data = requests.get(url, data, headers={'Authorization': token, 'Content-Type': 'application/json',
-                                                'accept': 'application/psr.ant.v1+json', "Ant-Action": ant_action},verify=False,)
+                                                'accept': 'application/psr.ant.v1+json', "Ant-Action": ant_action})
         return data
 
     @staticmethod
     def post(url, data, token, ant_action=None):
         data = requests.post(url,data,headers={'Authorization': token, 'Content-Type': 'application/json',
-                                                 'accept': 'application/psr.ant.v1+json', "Ant-Action": ant_action},verify=False,)
+                                                 'accept': 'application/psr.ant.v1+json', "Ant-Action": ant_action})
         return data
 
     @staticmethod
