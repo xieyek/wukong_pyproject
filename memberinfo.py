@@ -202,7 +202,7 @@ class member():
      m = member().get_member_info(token)
      member_info =Common.loads_text(m)["data"]["id"]
      # 实名认证
-     member().post_member_update(operation_token, member_info)
+     member().post_member_update(operation_token1, member_info)
     # 绑定邀请人手机后激活掌柜权限
     #  member().post_js_signature(token)
      # 获取我的业绩中心信息

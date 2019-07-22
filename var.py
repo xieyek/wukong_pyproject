@@ -9,51 +9,56 @@ no_register_mobile = "19999999999"
 
 # 价格数据不能改
 # 出厂价
-factory_price = "50"
-# 零售价
-sale_price = "200"
+factory_price=1
+# factory_price = "50"
+# # 零售价
+sale_price=2
+# sale_price = "200"
 # 团购价
-dailysales_price = "150"
+dailysales_price=1.3
+# dailysales_price = "150"
 # Lv1价不能改
-Lv1_price = "100"
-# Lv2价
-Lv2_price = "99.20"
-# Lv3价
-Lv3_price = "98.40"
-# Lv4价
-Lv4_price = "97.60"
-# Lv5价
-Lv5_price = "96.60"
-# Lv6价
-Lv6_price = "95.80"
-# Lv7价
-Lv7_price = "94.80"
-# Lv8价
-Lv8_price = "94.00"
-# Lv9价
-Lv9_price = "93.20"
-# Lv10价
-Lv10_price = "92.00"
-# Lv11价
-Lv11_price = "91.00"
-# Lv12价
-Lv12_price = "90.20"
-# Lv13价
-Lv13_price = "89.40"
-# Lv14价
-Lv14_price = "88.60"
-# Lv15价
-Lv15_price = "86.40"
-# Lv16价
-Lv16_price = "85.60"
-# Lv17价
-Lv17_price = "84.80"
-# Lv18价
-Lv18_price = "83.80"
-# Lv19价
-Lv19_price = "83.00"
+Lv1_price=1.2
+# Lv1_price = "100"
+# # Lv2价
+# Lv2_price = "99.20"
+# # Lv3价
+# Lv3_price = "98.40"
+# # Lv4价
+# Lv4_price = "97.60"
+# # Lv5价
+# Lv5_price = "96.60"
+# # Lv6价
+# Lv6_price = "95.80"
+# # Lv7价
+# Lv7_price = "94.80"
+# # Lv8价
+# Lv8_price = "94.00"
+# # Lv9价
+# Lv9_price = "93.20"
+# # Lv10价
+# Lv10_price = "92.00"
+# # Lv11价
+# Lv11_price = "91.00"
+# # Lv12价
+# Lv12_price = "90.20"
+# # Lv13价
+# Lv13_price = "89.40"
+# # Lv14价
+# Lv14_price = "88.60"
+# # Lv15价
+# Lv15_price = "86.40"
+# # Lv16价
+# Lv16_price = "85.60"
+# # Lv17价
+# Lv17_price = "84.80"
+# # Lv18价
+# Lv18_price = "83.80"
+# # Lv19价
+# Lv19_price = "83.00"
 # Lv20价
-Lv20_price = "80.00"
+# Lv20_price = "80.00"
+Lv20_price=1.1
 
 # 没有权限访问
 no_access = "对不起，您没有权限访问"
