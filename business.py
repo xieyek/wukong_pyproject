@@ -118,7 +118,7 @@ class Business(object):
             }
             data1 = Common.dumps_text(data)
             obj = Http.post(Common.first_url() + "Products", data1, token)
-            print("添加默认规格的商品" + str(obj.status_code))
+            print("添加默认规格的商品" + str(obj.status_code)+str(obj))
             Common.out_error(obj)
             return obj
 

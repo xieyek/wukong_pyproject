@@ -107,8 +107,8 @@ class member():
      print("创建会员卡订单后虚假支付" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
-     # 新增商品加入档期信息接口
 
+     # 新增商品加入档期信息接口
  @staticmethod
  def post_AddProductTerm(token, product_id, start_at=Common.current_time()[:10], end_at=Common.next_time(10),
                          stock_warning=300, type=1, type_name='自选'):
@@ -121,7 +121,7 @@ class member():
      }
      data1 = Common.dumps_text(data)
      obj = Http.post(Common.first_url() + "admin/AddProductTerm", data1, token)
-     print("商品加入档期" + str(obj.status_code))
+     print("商品加入档期" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
 
@@ -131,10 +131,9 @@ class member():
         data= {"id": id,"is_star": is_star}
         data1 = Common.dumps_text(data)
         obj = Http.post(Common.first_url() + "admin/MemberUpdate", data1, token)
-        print("升级明星掌柜" + str(obj.status_code))
+        print("升级明星掌柜" + str(obj.status_code)+str(obj.json()))
         Common.out_error(obj)
         return obj
-
   #视频关联商品
  @staticmethod
  def post_MemberVideoAdd(token, product_id, member_id, url='https://mayistatic.bc2c.cn/lj735VBrApe0xjjm94VKP3cQ8q0U',
@@ -151,7 +150,7 @@ class member():
         }
         data1 = Common.dumps_text(data)
         obj = Http.post(Common.first_url() + "admin/MemberVideoAdd", data1, token)
-        print("视频关联商品" + str(obj.status_code))
+        print("视频关联商品" + str(obj.status_code)+str(obj.json()))
         Common.out_error(obj)
         return obj
 
@@ -162,24 +161,23 @@ class member():
      obj = Http.get(
          Common.first_url() + "admin/MemberVideo?product=&member_name=&member_bobile=&startTime=&endTime=&is_hidden=&page=1&pageSize=15&orderType=DESC&orderField=id",
          None, token)
-     print("获取视频列表" + str(obj.status_code))
+     print("获取视频列表" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
 
  #明星掌柜商品绑定
  @staticmethod
  def star_bussiness(member_id,type,product_id=''):
-
     if product_id=='':
         #添加商品审核
         product_id=Business.CompleteAudit(product_id='')
         #添加到自选池
-        member.post_AddProductTerm(type=type,token=cf.operation_token, product_id=product_id)
-        member.post_MemberUpdate(token=cf.operation_token, id=member_id,is_star=1)
+        member.post_AddProductTerm(type=type,token=cf.operation_token1, product_id=product_id)
+        member.post_MemberUpdate(token=cf.operation_token1, id=member_id,is_star=1)
         #绑定视频
-        member.post_MemberVideoAdd(token=cf.operation_token, product_id=product_id, member_id=member_id)
+        member.post_MemberVideoAdd(token=cf.operation_token1, product_id=product_id, member_id=member_id)
         #获取视频列表
-        obj=member.get_MemberVideo(token=cf.operation_token)
+        obj=member.get_MemberVideo(token=cf.operation_token1)
         id=obj.json()['data']['data'][0]['id']
         #返回商品id，视频id
     return product_id,id
