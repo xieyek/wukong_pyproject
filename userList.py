@@ -1,3 +1,4 @@
+from Common.common import Common
 from login import Login
 from memberinfo import member
 from cf import *
@@ -25,6 +26,7 @@ class UserList(object):
              short_no = bulidorder[1]
              num = bulidorder[2]
              price = bulidorder[3]
+             # order.post_pay_order(token=shopkeeper_token,trade_no=trade_no,money=price) #微信支付
              order.payorder(self,token=shopkeeper_token, trade_no=trade_no)  # 余额购买
          if type==1:
              bulidorder = order.bulidorder(self, token=shopkeeper_token, order_num=order_num,
@@ -96,6 +98,26 @@ class UserList(object):
             men.SaleOrderHandle(int(SaleOrder_id), 3)  # 审核
             men.SaleOrderClose(int(SaleOrder_id), price)  # 结案
 
+    # 明星掌柜下单支付
+    @staticmethod
+    def star_order_pay(token, order_num=1, pay_type=1):
+            obj = member.get_MemberDailySale(token)
+            id = obj.json()['data']['member_products'][0]['id']
+            DailySaleDetail = member.get_DailySaleDetail(token, id)
+            daily_sale_id = Common.loads_text(DailySaleDetail)["data"]["daily_sale_id"]
+            product_sku_id = Common.loads_text(DailySaleDetail)["data"]["buy"]["default_sku_id"]
+            print(daily_sale_id,product_sku_id)
+            if product_sku_id == 0:
+                product_sku_id = Common.loads_text(DailySaleDetail)["data"]["buy"]["sku"][0]["sku_id"]
+            trade_no, short_no, order_num, pay_price=order().bulidorder(token,order_num,product_sku_id,daily_sale_id,is_platform=0)
+            if pay_type == 1:
+                # 掌柜创建订单后悟空钱包支付
+                order().payorder(token, trade_no)
+            else:
+                # 创建订单后虚假支付
+                member().post_daily_sale_order_paid(token, trade_no, pay_price)
+            Common.strike()
+            return short_no, trade_no
 
 
 

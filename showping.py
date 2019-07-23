@@ -43,7 +43,6 @@ class showping:
         }
         res=requests.get(url,headers=headers).json()
         daily_sale_id =res['data']['daily_sale_id']
-        #default_sku_stock
         #总剩余库存
         total_stock = res['data']['stock']
 

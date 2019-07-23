@@ -1,11 +1,12 @@
 from http_method import Http
 # from login import Login
+from cf import *
 import requests
 from showping import showping
 from sql import Mysql
 from Common.common import Common
 class order(object):
-    def bulidorder(self,token,order_num,product_sku_id,daily_sale_id): #创建订单
+    def bulidorder(self,token,order_num,product_sku_id,daily_sale_id,is_platform=1): #创建订单
         # product=showping().indexshowping(token,index_num)
         # product_info=showping().showpinginfo(product[0],token)
         # product_sku_id=product_info[1]
@@ -20,6 +21,7 @@ class order(object):
             # "cookie": "token="+ membertoken
         }
         data={
+            "is_platform": is_platform,
             'area_code':'110101',
             'product_sku_id':product_sku_id,
             'product_num':order_num,#购买数量
@@ -40,14 +42,19 @@ class order(object):
         }
         data1 = Common.dumps_text(data)
         order= requests.post(url=url, headers=headers, data=data1).json()
-        if (order['status']== 200):
-            print('创建成功:' + str(order))
+        if order['status']== 200 and is_platform==1:
+            print('创建官推商品成功:' + str(order))
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
             pay_price=order['data']['pay_price']
             return trade_no, short_no,order_num,pay_price
-        else:
-            print('创建失败:' + str(order))
+        elif order['status']== 200 and is_platform==0:
+            print('创建明星掌柜商品成功:' + str(order))
+            trade_no = order['data']['trade_no']
+            short_no = order['data']['short_no']
+            pay_price = order['data']['pay_price']
+            return trade_no, short_no, order_num, pay_price
+        else:print("创建订单失败",order)
     def payorder(self,token,trade_no): #余额支付
         url=Common.first_url()+'app/PayBySystem'
        # url="https://hotfix.shuixiongkeji.net/app/PayBySystem"
@@ -152,8 +159,58 @@ class order(object):
         Common.out_error(obj)
         return obj
 
+    # 创建订单后微信支付
+    @staticmethod
+    def post_pay_order(token, trade_no, money="26", pay_type="2", sense="5", description="购买团购商品",
+                       open_id=openid, is_h5="", return_url=""):
+        data = {
+            "trade_no": trade_no,  # 流水账号
+            "money": money,  # 订单金额
+            "pay_type": pay_type,  # 支付方式  2微信
+            "sense": sense,  # 5购买团购商品、2购买服务包
+            "description": description,  # 购买团购商品、购买服务包
+            "open_id": open_id,  # 第一份成为会员时使用，后期买卡不需要
+            "is_h5": is_h5,
+            "return_url": return_url
+        }
+        data1 = Common.dumps_text(data)
+        obj = Http.post(Common.first_url() + "app/PayOrder", data1, token)
+        print("创建订单后微信支付" + str(obj.status_code)+str(obj.json()))
+        Common.out_error(obj)
+        return obj
 
-
+    # C端创建悟空团订单
+    @staticmethod
+    def post_generate_daily_sale_order_C(token, member_id, consumer_id, product_sku_id, product_num, daily_sale_id,
+                                         freight_template_id, product_attr_val_id=0, selected_order_label_array=[],
+                                         remark="备注", freight=0, contacter="测试收货人", mobile="18928861036",
+                                         province="广东省", city="广州市", area="荔湾区", address="沙面南街1号",
+                                         area_code="440103", pay_vip=0):
+        data = {
+            "member_id": member_id,
+            "consumer_id": consumer_id,
+            "product_sku_id": product_sku_id,  # 产品类型
+            "product_num": product_num,  # 下单数量
+            "daily_sale_id": daily_sale_id,  # 悟空团的ID
+            "freight_template_id": freight_template_id,  # 配送的物流ID
+            "product_attr_val_id": product_attr_val_id,  # 商品的属性ID，默认0
+            "remark": remark,
+            "freight": freight,
+            "contacter": contacter,
+            "mobile": mobile,
+            "province": province,
+            "city": city,
+            "area": area,
+            "address": address,
+            "area_code": area_code,
+            "selected_order_label_array": selected_order_label_array,
+            "pay_vip": pay_vip,  # 默认0
+        }
+        data1 = Common.dumps_text(data)
+        obj = Http.post(Common.first_url() + "app/GenerateDailySaleOrder", data1, token)
+        print("C端创建悟空团订单" + str(obj.status_code))
+        Common.out_error(obj)
+        return obj
 
 
 

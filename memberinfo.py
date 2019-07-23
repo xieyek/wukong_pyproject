@@ -33,6 +33,20 @@ class member():
 
         else:
             print('用户信息获取失败：' + str(res))
+ # 获取掌柜团列表
+ @staticmethod
+ def get_MemberDailySale(token):
+     obj = Http.get(Common.first_url() + "app/MemberDailySale?daily_at=" + Common.current_time()[:10], None, token)
+     print("获取掌柜团列表" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
+ # 获取掌柜团商品详情
+ @staticmethod
+ def get_DailySaleDetail(token, id):
+     obj = Http.get(Common.first_url() + "app/DailySaleDetail?id=%r&is_platform=0&pre_sale=" % id, None, token)
+     print("掌柜团商品详情" + str(obj.status_code)+str(obj.json()))
+     Common.out_error(obj)
+     return obj
  #绑定邀请人
  def post_update_info(self,token, recommend_code):
      data = {
