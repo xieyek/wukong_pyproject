@@ -6,10 +6,7 @@ from  sql import Mysql
 class showping:
     def indexshowping(self,token,num):
         url=Common.first_url()+'app/MrdGetDailySale'
-
-        #url='https://hotfix.shuixiongkeji.net/app/MrdGetDailySale'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
         }
@@ -35,7 +32,6 @@ class showping:
 
     #我的订单页面
     def showpinginfo(self,id,token,sku_num=0):
-        #url='https://hotfix.shuixiongkeji.net/app/DailySaleDetail?id=%d'%id
         url=Common.first_url()+'app/DailySaleDetail?id=%d'%id
         headers = {
             'Content-Type': "application/json",

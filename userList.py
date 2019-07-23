@@ -118,9 +118,3 @@ class UserList(object):
                 member().post_daily_sale_order_paid(token, trade_no, pay_price)
             Common.strike()
             return short_no, trade_no
-
-
-
-
-
-

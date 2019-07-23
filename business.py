@@ -32,12 +32,9 @@ class Business(object):
     #拣货
     def takeshoping(self,token,sub_order_id):
         url=Common.first_url()+'seller/CheckedOrders'
-        #url='https://hotfix.shuixiongkeji.net/SubOrders?'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
         data={
             "sub_order_id": sub_order_id
@@ -48,16 +45,11 @@ class Business(object):
             print('拣货成功:'+str(res.json()))
         else:
             print('拣货失败:'+str(res.json()))
-
-
     def fahuo(self,token,short_no,sub_order_id,express_num):
         url=Common.first_url()+'seller/UnifyDeliverGoods'
-        #url='https://hotfix.shuixiongkeji.net/OrderExpresses?'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
         data={"orders":[{"delivery_name":"申通快递",
                          "delivery_no":"3714219852419",
@@ -66,7 +58,6 @@ class Business(object):
                          "express_num":express_num}]}
         data1 = json.dumps(data)
         res=requests.post(url,data1,headers=headers)
-        #res = Http.post(url, data1, token)
         if (res.status_code == 200):
             print('发货信息'+str(res.json()))
             return res.status_code
@@ -80,7 +71,6 @@ class Business(object):
             order_status_total[0][1]) + ' ' + 'daily_sale_orders_status: ' + str(
             order_status_total[0][0]) + ' ' + 'order_status: ' + str(order_status_total[0][2])
               )
-
     # 添加默认规格的商品
     @staticmethod
     def post_products(token, product_after_sale_id, product_category_id=2, name="专用枕头",
@@ -121,7 +111,6 @@ class Business(object):
             print("添加默认规格的商品" + str(obj.status_code)+str(obj))
             Common.out_error(obj)
             return obj
-
      # 默认规格商品规格审核
     @staticmethod
     def post_ProductSpecAudit(token, product_id, approval_status=1, approval_reason='',
@@ -135,7 +124,6 @@ class Business(object):
         print("商品规格审核" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
     @staticmethod
     def post_ProductFreightAudit(token, product_id, approval_status=1, approval_reason=''):
         data = {"product_id": product_id,
@@ -146,9 +134,7 @@ class Business(object):
         print("商品邮费模板审核" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
         # 默认规格商品资质审核
-
     @staticmethod
     def post_ProductLicenseAudit(token, product_id, approval_status=1, approval_reason='',
                                  license_img="[\"https://mayistatic.bc2c.cn/FlEyyzSGBd_RgU7briPkn7HF5wVq?imageMogr2/auto-orient\"]"):
@@ -162,7 +148,6 @@ class Business(object):
         Common.out_error(obj)
         return obj
         # 默认规格完成审核
-
     def post_CompleteAudit(token, product_id):
         data = {"product_id": product_id}
         data1 = Common.dumps_text(data)
@@ -170,8 +155,6 @@ class Business(object):
         print("商品完成审核" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
-
     #默认规格商品填写开团价
     @staticmethod
     def post_ProductPricing(token,product_id,sku_id,sale_price=var.sale_price,daily_sale_price=var.dailysales_price,wholesale1_price=var.Lv20_price,wholesale2_price=var.Lv1_price,approval_status=1,with_product_id=[]):
@@ -228,7 +211,6 @@ class Business(object):
         Common.out_error(obj)
         return obj
         # 默认规格商品信息审核
-
     @staticmethod
     def post_ProductInfoAudit(token, product_id, approval_status=1, approval_reason='', name="小蜜蜜", short_title='小蜜蜜',
                               contrast_url='', daily_category_id=7, department_id=12):
@@ -290,8 +272,6 @@ class Business(object):
         print("添加悟空团" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
-
     # 编辑团,添加新产品单规格
     @staticmethod
     def modify_dailysale(op_token, daily_sales_id, product_list, product_id,start_at=Common.current_time()[:10]):
@@ -305,9 +285,6 @@ class Business(object):
                 # products.append({"product_id": i["product_id"], "sku": sku})
         else:
             for i in product_list[:4]:
-                # sku = []
-                # for sk in i["product_skus"]:
-                #     sku.append({"price": sk["price"], "sku_id": sk["sku_id"]})
                 products.append({"product_id": i["product_id"]})
         data = {
             "id": daily_sales_id,
@@ -320,15 +297,12 @@ class Business(object):
         print("编辑团" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
-
     # 添加商品》商品审核》开团 单规格商品
     @staticmethod
     def product_audit_dailysale(start_at=Common.current_time()[:10]):
         op_token = cf.operation_token1
         su_token = cf.supplier_token
         # 供应商添加商品
-
         obj = Business().post_GetVerifyCode(token=su_token, phone=19986415739)
         code = obj.json()['data']['content']
         time.sleep(3)
@@ -336,7 +310,6 @@ class Business(object):
         product_after_sale_id = obj.json()['data']['id']
         p = Business.post_products(su_token, freight_template=[1,2], product_after_sale_id=product_after_sale_id)
         product_id = Common.loads_text(p)["data"][0]["attributes"]["id"]
-
         # 运维审核通过
         Business.CompleteAudit(product_id)
         # 运维获取悟空团列表
@@ -354,8 +327,3 @@ class Business(object):
         w = Business.get_daily_sales(op_token)
         product_id=Common.loads_text(w)["data"]["today"]["products"][0]['id']
         return product_id
-
-
-
-
-

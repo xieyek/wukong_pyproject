@@ -7,18 +7,12 @@ from sql import Mysql
 from Common.common import Common
 class order(object):
     def bulidorder(self,token,order_num,product_sku_id,daily_sale_id,is_platform=1): #创建订单
-        # product=showping().indexshowping(token,index_num)
-        # product_info=showping().showpinginfo(product[0],token)
-        # product_sku_id=product_info[1]
-        # daily_sale_id=product_info[0]
         freight_template_id= showping().Freights(token,product_sku_id)
         url=Common.first_url()+'app/GenerateDailySaleOrder'
-        #url="https://hotfix.shuixiongkeji.net/app/GenerateDailySaleOrder"
         headers = {
             # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
         data={
             "is_platform": is_platform,
@@ -43,13 +37,13 @@ class order(object):
         data1 = Common.dumps_text(data)
         order= requests.post(url=url, headers=headers, data=data1).json()
         if order['status']== 200 and is_platform==1:
-            print('创建官推商品成功:' + str(order))
+            print('创建官推商品订单成功:' + str(order))
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
             pay_price=order['data']['pay_price']
             return trade_no, short_no,order_num,pay_price
         elif order['status']== 200 and is_platform==0:
-            print('创建明星掌柜商品成功:' + str(order))
+            print('创建明星掌柜商品订单成功:' + str(order))
             trade_no = order['data']['trade_no']
             short_no = order['data']['short_no']
             pay_price = order['data']['pay_price']
@@ -57,9 +51,7 @@ class order(object):
         else:print("创建订单失败",order)
     def payorder(self,token,trade_no): #余额支付
         url=Common.first_url()+'app/PayBySystem'
-       # url="https://hotfix.shuixiongkeji.net/app/PayBySystem"
         headers = {
-        # Bearer
         'Content-Type': "application/json",
         'Authorization': token
     }
@@ -75,12 +67,9 @@ class order(object):
 
     def qxzhifuorder(self,token,short_no): #取消已支付订单
         url=Common.first_url()+'app/CancelRetailOrder'
-        #url="https://hotfix.shuixiongkeji.net/app/CancelRetailOrder"
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token
-            # "cookie": "token="+ membertoken
         }
         data={
             'short_no':short_no
@@ -96,14 +85,9 @@ class order(object):
             url=Common.first_url()+'app/MrdRetailOrder?status={0}&page={1}&keyword={2}&limit={3}'.format(
                 status,page,keyword,limit
             )
-            # url='https://hotfix.shuixiongkeji.net/app/MrdRetailOrder?status={0}&page={1}&keyword={2}&limit={3}'.format(
-            #     status,page,keyword,limit
-            # )
             headers = {
-                # Bearer
                 'Content-Type': "application/json",
                 'Authorization': token
-                # "cookie": "token="+ membertoken
             }
             res=requests.get(url,headers=headers).json()
             if(res['data']['data']==[]):
@@ -113,7 +97,6 @@ class order(object):
                 sub_order_id = res['data']['data'][0]['sub_order_id']
                 daily_sale_order_short_no = res['data']['data'][0]['daily_sale_order_short_no']
                 dailysale_order_price = res['data']['data'][0]['dailysale_order_price']
-                #consumer_price=res['data']['data'][0]['products'][0]['consumer_price']
                 sql = 'SELECT * FROM sub_orders WHERE id=%d; ' % sub_order_id
 
                 sql_sub_order_id = Mysql().sqlclien(sql)[0][1]
@@ -132,7 +115,6 @@ class order(object):
      #未支付取消订单
     def nopayquxiao(self,token,trade_no):
         url=Common.first_url()+'app/DailySaleOrderCancel'
-        #url='https://hotfix.shuixiongkeji.net/app/DailySaleOrderCancel'
         headers = {
             # Bearer
             'Content-Type': "application/json",
@@ -211,12 +193,3 @@ class order(object):
         print("C端创建悟空团订单" + str(obj.status_code))
         Common.out_error(obj)
         return obj
-
-
-
-
-
-
-
-
-

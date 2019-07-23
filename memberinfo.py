@@ -18,15 +18,12 @@ common=Common()
 class member():
  def userinfo(self,token):
         url=Common.first_url()+'app/MrdMemberInfo'
-        #url = "https://hotfix.shuixiongkeji.net/app/MrdMemberInfo"
         headers = {
             'Content-Type': "application/json",
             'Authorization': token
         }
-       # res = requests.request("GET",url, headers=headers)
         res = requests.get(url=url,headers=headers)
         resdata=res.json()['data']
-       # res=Http.get(url,None,token)
         if (res.status_code==200):
             print('用户信息获取成功：'+ str(resdata) )
             return resdata['id'],resdata['balance'],resdata['agent_level'],resdata['stock'],resdata['rec_member_id'],resdata['member_card_profit'],resdata['current_level_name']
@@ -75,8 +72,6 @@ class member():
         print("掌柜实名认证" + str(obj.status_code)+str(obj.json()))
         Common.out_error(obj)
         return obj
-        # 创建购买会员卡订单
-
  #创建购买会员卡订单
  def post_generate_buy_card_order(self,token, membership_card_number=1, type1=0, agent_level_id=None):
      data = {
@@ -89,14 +84,12 @@ class member():
      print("创建购买会员卡订单" + str(obj.status_code))
      Common.out_error(obj)
      return obj
-
  # 获取悟空掌柜小店经营权信息
  def get_member_info(self,token):
      obj = Http.get(Common.first_url() + "app/MemberInfo", None, token)
      print("获取悟空掌柜小店经营权信息" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
-
 #订单免支付接口
  def post_daily_sale_order_paid(self, token, trade_no, pay_price):
      data = {
@@ -109,8 +102,6 @@ class member():
      Common.out_error(obj)
      return obj
      # 创建会员卡订单后虚假支付
-
-
  def post_member_card_order_paid(self,token, trade_no, pay_price):
      data = {
          "trade_no": trade_no,  # 流水账号
@@ -167,9 +158,7 @@ class member():
         print("视频关联商品" + str(obj.status_code)+str(obj.json()))
         Common.out_error(obj)
         return obj
-
  # 视频列表
-
  @staticmethod
  def get_MemberVideo(token):
      obj = Http.get(
@@ -178,7 +167,6 @@ class member():
      print("获取视频列表" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
-
  #明星掌柜商品绑定
  @staticmethod
  def star_bussiness(member_id,type,product_id=''):
@@ -195,7 +183,6 @@ class member():
         id=obj.json()['data']['data'][0]['id']
         #返回商品id，视频id
     return product_id,id
-
  # 注册悟空掌柜，绑定邀请人
  def register_shopkeeper(self,token, recommend_mobile=recommend_mobile):
      # 创建购买会员卡订单,1张
@@ -238,9 +225,7 @@ class member():
      print("获取我的业绩中心信息" + str(obj.status_code)+str(obj.json()))
      Common.out_error(obj)
      return obj
-
   # 购买会员卡 升级或注册
-
  def buy_member_card(self,token, card_number=1, type1=0):
         if card_number == 0:
             print("购买0张卡")
@@ -264,7 +249,6 @@ class member():
             member().post_member_card_order_paid(token, trade_no, pay_price)
             return trade_no, pay_price
         # 设置为全球人
-
  def global_partner(self,sp_token):
      op_token = cf.operation_token.operation_token
      # 发送验证码
@@ -281,14 +265,11 @@ class member():
      # Common.strike_n(65)
 
      # 获取小店经营中心信息
-
  def get_mrd_member_info(self,token):
          obj = Http.get(Common.first_url() + "app/MrdMemberInfo", None, token)
          print("获取小店经营中心信息" + str(obj.status_code))
          Common.out_error(obj)
          return obj
-
-
  def CreateSaleOrder(self,sub_order_id,sale_type,price): #创建售后单
      sql='SELECT id FROM daily_sale_orders WHERE order_id=%d;'%sub_order_id
      obj=Mysql().sqlclien(sql)[0][0]
@@ -334,14 +315,11 @@ class member():
      membertoken=shopkeeper_token
      url =Common.first_url()+ 'app/ConsultativeHistory'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': membertoken
-         # "cookie": "token="+ membertoken
      }
      data = {
          'order_id': 2666009,
-        # 'consumer_id':1140748,
 
      }
      r = requests.get(url, data=data, headers=headers)
@@ -350,10 +328,8 @@ class member():
       token1 = admin_token
       url =Common.first_url()+'admin/SaleOrderHandle'
       headers = {
-          # Bearer
           'Content-Type': "application/json",
           'Authorization': token1
-          # "cookie": "token="+ membertoken
       }
       data = {
           'id':id,
@@ -367,10 +343,8 @@ class member():
      token1 = admin_token
      url =Common.first_url()+'admin/SaleOrderClose'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      date = {
          "id": id,
@@ -392,22 +366,17 @@ class member():
      token2=supplier_token
      url = Common.first_url()+'seller/PostSaleOrders'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token2
-         # "cookie": "token="+ membertoken
      }
      r = requests.get(url, headers=headers)
      print(r.json())
  def admin_PostSaleOrders(self):#售后工单列表总后台
-
      token1 = admin_token
      url = Common.first_url(2)+ 'admin/PostSaleOrders'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
 
      r = requests.get(url,None,headers=headers)
@@ -419,7 +388,6 @@ class member():
          # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      date={
          'type':4,
@@ -440,7 +408,6 @@ class member():
       date = {
           'id':id,
           'delivery_no':'371422'+delivery_no,
-          # 'delivery_no': '3714820492928',
           'delivery_id':75,
           'remark':'哈哈哈',
           'images':['http://thirdwx.qlogo.cn/mmopen/vi_32/pV00oiasYq7NEJDjSg25yY6LB0pLUmZtcY7RtME5CxCpGYPSNwDGVNkffkRLicygVa8lJoc1kvHZJLB02J9H5cTg/132']
@@ -454,10 +421,8 @@ class member():
      token1 = admin_token
      url = Common.first_url()+ 'admin/PostSaleOrders'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      r = requests.get(url, headers=headers)
      print(r.json())
@@ -468,7 +433,6 @@ class member():
          # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      date={
          'title':'jdiwedw',
@@ -479,7 +443,6 @@ class member():
          'product_images':['51545'],
          'afterSale_images':['4848']
      }
-
      r = requests.post(url, json.dumps(date),headers=headers)
      print(r.json())
 
@@ -487,15 +450,12 @@ class member():
      token1 =admin_token
      url =Common.first_url()+ 'admin/JobOrder'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      date = {
         'order_id':1374583
      }
-
      r = requests.get(url, params=date, headers=headers)
      print(r.json())
 
@@ -503,10 +463,8 @@ class member():
       token1 =admin_token
       url = Common.first_url()+'admin/SaleOrderRefund'
       headers = {
-          # Bearer
           'Content-Type': "application/json",
           'Authorization': token1
-          # "cookie": "token="+ membertoken
       }
       r = requests.get(url, headers=headers)
       print(r.json())
@@ -515,10 +473,8 @@ class member():
         token1 =admin_token
         url =Common.first_url()+'admin/GetQiYuTemplateField'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token1
-            # "cookie": "token="+ membertoken
         }
         data={
             'templateId':0
@@ -542,10 +498,8 @@ class member():
         token1 = admin_token
         url =Common.first_url()+'admin/GetQiYuGroupMember'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token1
-            # "cookie": "token="+ membertoken
         }
         data={
             'groupId':1,
@@ -553,15 +507,12 @@ class member():
         }
         r = requests.get(url,params=data,headers=headers)
         print(r.json())
-
  def SavePostSaleType(self):  # 修改类型配置
         token1 = admin_token
         url = Common.first_url()+'admin/SavePostSaleType'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token1
-            # "cookie": "token="+ membertoken
         }
         data = {
             'id': 7,
@@ -570,7 +521,6 @@ class member():
         }
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print(r.json())
-
  def CreatePostSaleType(self):  # 创建类型配置
         token1 = admin_token
         url =Common.first_url()+'admin/CreatePostSaleType'
@@ -588,15 +538,12 @@ class member():
         }
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print(r.json())
-
  def PostSaleType(self):  # 类型配置列表
         token1 = admin_token
         url = Common.first_url()+'admin/PostSaleType'
         headers = {
-            # Bearer
             'Content-Type': "application/json",
             'Authorization': token1
-            # "cookie": "token="+ membertoken
         }
         r = requests.get(url, headers=headers)
         print(r.json())
@@ -611,7 +558,6 @@ class member():
      }
      date={
          'id':11,
-
      }
      r = requests.get(url,params=date,headers=headers)
      print(r.json())
@@ -621,10 +567,8 @@ class member():
      token1 = shopkeeper_token
      url =Common.first_url() + 'app/SetConfig'
      headers = {
-         # Bearer
          'Content-Type': "application/json",
          'Authorization': token1
-         # "cookie": "token="+ membertoken
      }
      data={
          'ckey':'timeout',
@@ -681,9 +625,7 @@ class member():
              data1 = Common.dumps_text(date)
              req = requests.post(url=url, headers=header, data=data1)
              print(req.json())
-
          # # 结算
-         # #
          if type == 2: #直接完成
              url =Common.first_url()+'admin/CompletedOrders'
              header = {'Content-Type': 'application/json',
@@ -710,9 +652,5 @@ class member():
              res=requests.post(url=url1, headers=header, data=data1)
              print('签收：',req.json())
              print('完成：',res.json())
-
-
-
-
 #member().SetConfig()
 #member().SupplySaleOrder()
